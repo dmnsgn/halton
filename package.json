@@ -1,0 +1,52 @@
+{
+  "name": "halton",
+  "version": "0.0.0",
+  "description": "Generate n points of the Halton sequence in n-dimensions.",
+  "keywords": [
+    "halton",
+    "point-set",
+    "low-discrepancy",
+    "quasirandom",
+    "sequence"
+  ],
+  "homepage": "https://github.com/dmnsgn/halton",
+  "bugs": "https://github.com/dmnsgn/halton/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dmnsgn/halton.git"
+  },
+  "funding": [
+    {
+      "type": "individual",
+      "url": "https://paypal.me/dmnsgn"
+    },
+    {
+      "type": "individual",
+      "url": "https://commerce.coinbase.com/checkout/56cbdf28-e323-48d8-9c98-7019e72c97f3"
+    }
+  ],
+  "license": "MIT",
+  "author": "Damien Seguin (https://github.com/dmnsgn)",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "default": "./index.js"
+    }
+  },
+  "main": "index.js",
+  "types": "types/index.d.ts",
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.5.1",
+    "snowdev": ">=2.3.x"
+  },
+  "devDependencies": {
+    "canvas-context": "^3.3.0",
+    "es-module-shims": "^2.0.9"
+  },
+  "dependencies": {
+    "hammersley": "^1.0.0"
+  }
+}

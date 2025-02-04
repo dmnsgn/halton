@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>halton by Damien Seguin (https://github.com/dmnsgn)</title>
+    <style>
+      :root {
+        --color-dark: #404040;
+        --color-light: #f2f2f2;
+        --color-accent: #fd5e62;
+      }
+
+      body {
+        margin: 0;
+        overscroll-behavior: none;
+        font-family: sans-serif;
+        color: var(--color-dark);
+        background-color: var(--color-light);
+      }
+
+      main {
+        padding: 0 20px;
+      }
+
+      .Results {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>halton</h1>
+      <div class="Results"></div>
+    </main>
+    <script async src="web_modules/es-module-shims.js" type="module"></script>
+    <script src="web_modules/import-map.json" type="importmap-shim"></script>
+
+    <script type="module-shim">
+      import halton from "./index.js";
+      import hammersley from "hammersley";
+
+      import canvasContext from "canvas-context";
+
+      const size = 512;
+      const halfSize = size / 2;
+
+      const pointsCount = 256;
+
+      const drawPoints = (title, points) => {
+        const { context, canvas } = canvasContext("2d", {
+          width: size,
+          height: size,
+        });
+
+        const containerElement = document.createElement("div");
+        const titleElement = document.createElement("h2");
+        titleElement.textContent = title;
+        containerElement.appendChild(titleElement);
+        containerElement.appendChild(canvas);
+        document.querySelector(".Results").appendChild(containerElement);
+
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+        context.fillStyle = `${window
+          .getComputedStyle(document.documentElement)
+          .getPropertyValue("--color-dark")}`;
+        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+
+        const scale = 0.95 * size;
+
+        for (let i = 0; i < points.length; i++) {
+          const [x, y] = points[i];
+          const t = i / points.length;
+
+          context.fillStyle = `oklch(from ${window
+            .getComputedStyle(document.documentElement)
+            .getPropertyValue("--color-accent")} l calc(c * ${t}) h)`;
+
+
+          context.beginPath();
+
+          context.arc(
+            halfSize - (0.5 - x) * scale,
+            halfSize + (0.5 - y) * scale,
+            (size / pointsCount) * 3,
+            0,
+            Math.PI * 2,
+          );
+
+          context.fill();
+          context.stroke();
+        }
+      };
+
+      [
+        [2, 3],
+        // [2, 5],
+        // [2, 7],
+        // [2, 9],
+        // [2, 11],
+        // [2, 13],
+        // [2, 15],
+        // [3, 5],
+        // [3, 7],
+        // [3, 11],
+        // [17, 19],
+      ].forEach((bases) => {
+        const title = `halton [${bases[0]}, ${bases[1]}]`;
+        console.time(title);
+        const points = halton(pointsCount, bases);
+        console.timeEnd(title);
+
+        drawPoints(title, points);
+        console.log(points);
+      });
+
+      console.time("hammersley");
+      const points = Array.from({ length: pointsCount }, (_, index) =>
+        hammersley(index, pointsCount),
+      );
+      console.timeEnd("hammersley");
+
+      drawPoints("hammersley", points);
+    </script>
+  </body>
+</html>
