@@ -37,16 +37,16 @@
   },
   "main": "index.js",
   "types": "types/index.d.ts",
-  "engines": {
-    "node": ">=22.0.0",
-    "npm": ">=10.5.1",
-    "snowdev": ">=2.3.x"
+  "dependencies": {
+    "hammersley": "^1.0.0"
   },
   "devDependencies": {
     "canvas-context": "^3.3.0",
     "es-module-shims": "^2.0.9"
   },
-  "dependencies": {
-    "hammersley": "^1.0.0"
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.5.1",
+    "snowdev": ">=2.3.x"
   }
 }

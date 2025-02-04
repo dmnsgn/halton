@@ -41,7 +41,19 @@ const points = halton(pointsCount);
 
 <!-- api-start -->
 
-Auto-generated API content.
+<a name="halton"></a>
+
+## halton(count, [bases]) ⇒ <code>Array.&lt;Array.&lt;number&gt;&gt;</code>
+
+Generate n points of the Halton sequence in n-dimensions.
+The "bases" parameter defines how many dimensions.
+
+**Kind**: global function
+
+| Param   | Type                              | Default             | Description                                                                          |
+| ------- | --------------------------------- | ------------------- | ------------------------------------------------------------------------------------ |
+| count   | <code>number</code>               |                     | Number of points in the sequence to generate.                                        |
+| [bases] | <code>Array.&lt;number&gt;</code> | <code>[2, 3]</code> | The bases for the Van der Corput operation. Best results with small coprime numbers. |
 
 <!-- api-end -->
 
