@@ -41,14 +41,36 @@ const points = halton(pointsCount);
 
 <!-- api-start -->
 
-<a name="halton"></a>
+<a name="module_halton"></a>
 
-## halton(count, [bases]) ⇒ <code>Array.&lt;Array.&lt;number&gt;&gt;</code>
+## halton
+
+- [halton](#module_halton)
+  - [.haltonSequence(index, base)](#module_halton.haltonSequence) ⇒ <code>number</code>
+  - [.default(count, [bases])](#module_halton.default) ⇒ <code>Array.&lt;Array.&lt;number&gt;&gt;</code>
+
+<a name="module_halton.haltonSequence"></a>
+
+### halton.haltonSequence(index, base) ⇒ <code>number</code>
+
+The Halton sequence algorithm.
+
+**Kind**: static method of [<code>halton</code>](#module_halton)
+**See**: [Wikipedia Halton_sequence](https://en.wikipedia.org/wiki/Halton_sequence#Implementation)
+
+| Param | Type                | Description                          |
+| ----- | ------------------- | ------------------------------------ |
+| index | <code>number</code> | Index in the sequence.               |
+| base  | <code>number</code> | An integer, preferably prime number. |
+
+<a name="module_halton.default"></a>
+
+### halton.default(count, [bases]) ⇒ <code>Array.&lt;Array.&lt;number&gt;&gt;</code>
 
 Generate n points of the Halton sequence in n-dimensions.
 The "bases" parameter defines how many dimensions.
 
-**Kind**: global function
+**Kind**: static method of [<code>halton</code>](#module_halton)
 
 | Param   | Type                              | Default             | Description                                                                          |
 | ------- | --------------------------------- | ------------------- | ------------------------------------------------------------------------------------ |

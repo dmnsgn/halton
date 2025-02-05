@@ -1,6 +1,6 @@
 {
   "name": "halton",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Generate n points of the Halton sequence in n-dimensions.",
   "keywords": [
     "halton",
