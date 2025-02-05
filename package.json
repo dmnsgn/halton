@@ -38,7 +38,7 @@
   "main": "index.js",
   "types": "types/index.d.ts",
   "dependencies": {
-    "hammersley": "^1.0.0"
+    "hammersley": "^2.0.0"
   },
   "devDependencies": {
     "canvas-context": "^3.3.0",
