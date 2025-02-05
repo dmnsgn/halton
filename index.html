@@ -10,6 +10,7 @@
         --color-dark: #404040;
         --color-light: #f2f2f2;
         --color-accent: #fd5e62;
+        --result-size: 192px;
       }
 
       body {
@@ -25,9 +26,13 @@
       }
 
       .Results {
-        display: flex;
-        gap: 20px;
-        flex-wrap: wrap;
+        display: grid;
+        grid-gap: 20px;
+        grid-template-columns: repeat(auto-fill, var(--result-size));
+
+        > div {
+          width: var(--result-size);
+        }
       }
     </style>
   </head>
@@ -45,28 +50,31 @@
 
       import canvasContext from "canvas-context";
 
-      const size = 512;
+      const documentStyles = getComputedStyle(document.documentElement);
+
+      const size = parseInt(documentStyles.getPropertyValue("--result-size"));
       const halfSize = size / 2;
 
       const pointsCount = 256;
 
-      const drawPoints = (title, points) => {
+      const drawPoints = (title, points, newRow) => {
         const { context, canvas } = canvasContext("2d", {
           width: size,
           height: size,
         });
 
         const containerElement = document.createElement("div");
-        const titleElement = document.createElement("h2");
+        if (newRow) {
+          Object.assign(containerElement.style, { gridColumnStart: 1 });
+        }
+        const titleElement = document.createElement("h3");
         titleElement.textContent = title;
         containerElement.appendChild(titleElement);
         containerElement.appendChild(canvas);
         document.querySelector(".Results").appendChild(containerElement);
 
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-        context.fillStyle = `${window
-          .getComputedStyle(document.documentElement)
-          .getPropertyValue("--color-dark")}`;
+        context.fillStyle = documentStyles.getPropertyValue("--color-dark");
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 
         const scale = 0.95 * size;
@@ -75,10 +83,7 @@
           const [x, y] = points[i];
           const t = i / points.length;
 
-          context.fillStyle = `oklch(from ${window
-            .getComputedStyle(document.documentElement)
-            .getPropertyValue("--color-accent")} l calc(c * ${t}) h)`;
-
+          context.fillStyle = `oklch(from ${documentStyles.getPropertyValue("--color-accent")} l calc(c * ${t}) h)`;
 
           context.beginPath();
 
@@ -93,28 +98,41 @@
           context.fill();
           context.stroke();
         }
+
+        return containerElement;
       };
 
+      let baseX;
       [
         [2, 3],
-        // [2, 5],
-        // [2, 7],
-        // [2, 9],
-        // [2, 11],
-        // [2, 13],
-        // [2, 15],
-        // [3, 5],
-        // [3, 7],
-        // [3, 11],
-        // [17, 19],
+        [2, 5],
+        [2, 7],
+        [2, 9],
+        [2, 11],
+        [2, 13],
+        [2, 15],
+        [3, 5],
+        [3, 7],
+        [3, 11],
+        [5, 7],
+        [5, 9],
+        [5, 11],
+        [5, 12],
+        [5, 13],
+        [7, 9],
+        [7, 11],
+        [7, 13],
+        [7, 15],
       ].forEach((bases) => {
         const title = `halton [${bases[0]}, ${bases[1]}]`;
+
         console.time(title);
         const points = halton(pointsCount, bases);
         console.timeEnd(title);
 
-        drawPoints(title, points);
-        console.log(points);
+        drawPoints(title, points, baseX !== bases[0]);
+
+        [baseX] = bases;
       });
 
       console.time("hammersley");
@@ -123,7 +141,7 @@
       );
       console.timeEnd("hammersley");
 
-      drawPoints("hammersley", points);
+      drawPoints("hammersley", points, true);
     </script>
   </body>
 </html>
