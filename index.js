@@ -61,6 +61,32 @@ const createPermutations = (bases = [2, 3], random = Math.random) =>
     return permutation;
   });
 
+const faurePermutation = (base) => {
+  if (base === 2) return [0, 1];
+
+  if (base % 2 === 0) {
+    const half = faurePermutation(base / 2).map((digit) => 2 * digit);
+    return [...half, ...half.map((digit) => digit + 1)];
+  }
+
+  const center = (base - 1) / 2;
+  const permutation = faurePermutation(base - 1).map((digit) =>
+    digit >= center ? digit + 1 : digit,
+  );
+  permutation.splice(center, 0, center);
+  return permutation;
+};
+
+/**
+ * Create a deterministic Faure digit permutation for each base, to scramble the
+ * Halton sequence.
+ *
+ * @param {number[]} [bases=[2, 3]] The bases to create a permutation for.
+ * @returns {number[][]}
+ * @see Faure, "Good permutations for extreme discrepancy", Journal of Number Theory, 1992.
+ */
+const createFaurePermutations = (bases = [2, 3]) => bases.map(faurePermutation);
+
 /**
  * Generate n points of the Halton sequence in n-dimensions. The "bases"
  * parameter defines how many dimensions. Pass "permutations" to scramble the
@@ -70,7 +96,7 @@ const createPermutations = (bases = [2, 3], random = Math.random) =>
  * @param {number[]} [bases=[2, 3]] The bases for the Van der Corput operation.
  *   Best results with small coprime numbers.
  * @param {number[][]} [permutations] A digit permutation per base. See
- *   createPermutations.
+ *   createPermutations and createFaurePermutations.
  * @returns {number[][]}
  * @alias module:halton.default
  */
@@ -84,5 +110,5 @@ const halton = (count, bases = [2, 3], permutations) =>
     }),
   );
 
-export { haltonSequence, createPermutations };
+export { haltonSequence, createPermutations, createFaurePermutations };
 export default halton;

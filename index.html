@@ -7,7 +7,7 @@
     <title>halton by Damien Seguin (https://github.com/dmnsgn)</title>
     <style>
       :root {
-       --color-dark: #222222;
+        --color-dark: #222222;
         --color-light: #f2f2f2;
         --color-accent: #95171d;
         --result-size: 192px;
@@ -26,9 +26,20 @@
       }
 
       .Results {
+        --canvas-gap: 10px;
+        --group-gap: 40px;
         display: grid;
-        grid-gap: 20px;
-        grid-template-columns: repeat(auto-fill, var(--result-size));
+        grid-template-columns: repeat(
+          auto-fill,
+          min(100%, calc(3 * var(--result-size) + 2 * var(--canvas-gap)))
+        );
+        grid-gap: var(--group-gap);
+      }
+
+      .Group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--canvas-gap);
 
         > div {
           width: var(--result-size);
@@ -45,7 +56,10 @@
     <script src="web_modules/import-map.json" type="importmap-shim"></script>
 
     <script type="module-shim">
-      import halton, { createPermutations } from "./index.js";
+      import halton, {
+        createPermutations,
+        createFaurePermutations,
+      } from "./index.js";
       import hammersley from "hammersley";
       import random from "pex-random";
 
@@ -61,21 +75,28 @@
       // Seeded for reproducible permutations across reloads.
       const prng = random.create(1);
 
-      const drawPoints = (title, points, newRow) => {
+      const createGroup = (newRow) => {
+        const groupElement = document.createElement("div");
+        groupElement.className = "Group";
+        if (newRow) {
+          Object.assign(groupElement.style, { gridColumnStart: 1 });
+        }
+        document.querySelector(".Results").appendChild(groupElement);
+        return groupElement;
+      };
+
+      const drawPoints = (title, points, groupElement) => {
         const { context, canvas } = canvasContext("2d", {
           width: size,
           height: size,
         });
 
         const containerElement = document.createElement("div");
-        if (newRow) {
-          Object.assign(containerElement.style, { gridColumnStart: 1 });
-        }
         const titleElement = document.createElement("h3");
         titleElement.textContent = title;
         containerElement.appendChild(titleElement);
         containerElement.appendChild(canvas);
-        document.querySelector(".Results").appendChild(containerElement);
+        groupElement.appendChild(containerElement);
 
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
         context.fillStyle = documentStyles.getPropertyValue("--color-dark");
@@ -131,30 +152,30 @@
       const isIdentity = (permutation) =>
         permutation.every((digit, index) => digit === index);
 
-      const drawHalton = (name, bases, permutations, newRow) => {
+      const drawHalton = (name, bases, permutations, groupElement) => {
         const title = `${name} [${bases[0]}, ${bases[1]}]`;
 
         console.time(title);
         const points = halton(pointsCount, bases, permutations);
         console.timeEnd(title);
 
-        drawPoints(title, points, newRow);
+        drawPoints(title, points, groupElement);
       };
 
       basesList.forEach((bases, i) => {
-        drawHalton(
-          "halton",
-          bases,
-          undefined,
-          bases[0] !== basesList[i - 1]?.[0],
-        );
+        const groupElement = createGroup(bases[0] !== basesList[i - 1]?.[0]);
 
-        const permutations = createPermutations(bases, () => prng.float());
+        drawHalton("halton", bases, undefined, groupElement);
 
         // Identity permutations leave the sequence unchanged.
-        if (!permutations.every(isIdentity)) {
-          drawHalton("scrambled", bases, permutations);
-        }
+        [
+          ["scrambled", createPermutations(bases, () => prng.float())],
+          ["faure", createFaurePermutations(bases)],
+        ].forEach(([name, permutations]) => {
+          if (!permutations.every(isIdentity)) {
+            drawHalton(name, bases, permutations, groupElement);
+          }
+        });
       });
 
       console.time("hammersley");
@@ -163,7 +184,7 @@
       );
       console.timeEnd("hammersley");
 
-      drawPoints("hammersley", points, true);
+      drawPoints("hammersley", points, createGroup(true));
     </script>
   </body>
 </html>

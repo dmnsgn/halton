@@ -37,13 +37,34 @@ const points = halton(pointsCount);
 // 3: [0.75, 0.1111111111111111]
 ```
 
-Scramble the sequence with a digit permutation per base to break the regular patterns of higher bases:
+### Scrambling
+
+Higher bases show regular patterns. Scramble each base with a digit permutation to break them.
+
+With Faure permutations (deterministic):
+
+```js
+import halton, { createFaurePermutations } from "halton";
+
+const bases = [11, 13];
+const points = halton(pointsCount, bases, createFaurePermutations(bases));
+```
+
+With random permutations (`Math.random` by default). Pass a seeded random function, e.g. from [pex-random](https://github.com/pex-gl/pex-random), for reproducible results:
 
 ```js
 import halton, { createPermutations } from "halton";
+import random from "pex-random";
 
 const bases = [11, 13];
 const points = halton(pointsCount, bases, createPermutations(bases));
+
+const prng = random.create(1);
+const seededPoints = halton(
+  pointsCount,
+  bases,
+  createPermutations(bases, () => prng.float()),
+);
 ```
 
 ## API

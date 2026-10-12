@@ -1,7 +1,11 @@
 import test from "node:test";
 import assert from "node:assert";
 
-import halton, { haltonSequence, createPermutations } from "../index.js";
+import halton, {
+  haltonSequence,
+  createPermutations,
+  createFaurePermutations,
+} from "../index.js";
 
 // No intermediate rounding: only the final conversion to a double.
 const exactRadicalInverse = (index, base, permutation) => {
@@ -163,5 +167,33 @@ test("should create deterministic permutations with a seeded random", () => {
   assert.deepStrictEqual(
     createPermutations(bases, mulberry32(4)),
     createPermutations(bases, mulberry32(4)),
+  );
+});
+
+test("should create Faure permutations", () => {
+  assert.deepStrictEqual(createFaurePermutations([2, 3, 4, 5, 6, 7]), [
+    [0, 1],
+    [0, 1, 2],
+    [0, 2, 1, 3],
+    [0, 3, 2, 1, 4],
+    [0, 2, 4, 1, 3, 5],
+    [0, 2, 5, 3, 1, 4, 6],
+  ]);
+});
+
+test("should create a valid Faure permutation per base", () => {
+  const faureBases = Array.from({ length: 127 }, (_, i) => i + 2);
+  createFaurePermutations(faureBases).forEach((permutation, i) => {
+    assert.deepStrictEqual(
+      permutation.toSorted((a, b) => a - b),
+      Array.from({ length: faureBases[i] }, (_, digit) => digit),
+    );
+  });
+});
+
+test("should keep the origin as first point with Faure permutations", () => {
+  assert.deepStrictEqual(
+    halton(1, bases, createFaurePermutations(bases))[0],
+    bases.map(() => 0),
   );
 });
