@@ -76,36 +76,73 @@ const seededPoints = halton(
 ## halton
 
 - [halton](#module_halton)
-  - [.haltonSequence(index, base)](#module_halton.haltonSequence) ⇒ <code>number</code>
-  - [.default(count, [bases])](#module_halton.default) ⇒ <code>Array.&lt;Array.&lt;number&gt;&gt;</code>
+  - [.haltonSequence(index, base, [permutation])](#module_halton.haltonSequence) ⇒ <code>number</code>
+  - [.createPermutations([bases], [random])](#module_halton.createPermutations) ⇒ <code>Array.&lt;Array.&lt;number&gt;&gt;</code>
+  - [.createFaurePermutations([bases])](#module_halton.createFaurePermutations) ⇒ <code>Array.&lt;Array.&lt;number&gt;&gt;</code>
+  - [.default(count, [bases], [permutations])](#module_halton.default) ⇒ <code>Array.&lt;Array.&lt;number&gt;&gt;</code>
 
 <a name="module_halton.haltonSequence"></a>
 
-### halton.haltonSequence(index, base) ⇒ <code>number</code>
+### halton.haltonSequence(index, base, [permutation]) ⇒ <code>number</code>
 
-The Halton sequence algorithm.
+The Halton sequence algorithm (radical inverse), optionally scrambled with a
+digit permutation.
 
 **Kind**: static method of [<code>halton</code>](#module_halton)
-**See**: [Wikipedia Halton_sequence](https://en.wikipedia.org/wiki/Halton_sequence#Implementation)
+**See**
 
-| Param | Type                | Description                          |
-| ----- | ------------------- | ------------------------------------ |
-| index | <code>number</code> | Index in the sequence.               |
-| base  | <code>number</code> | An integer, preferably prime number. |
+- [Wikipedia Halton_sequence](https://en.wikipedia.org/wiki/Halton_sequence#Implementation)
+- [PBR Book The Halton Sampler](https://www.pbr-book.org/3ed-2018/Sampling_and_Reconstruction/The_Halton_Sampler)
+
+| Param         | Type                              | Description                                                      |
+| ------------- | --------------------------------- | ---------------------------------------------------------------- |
+| index         | <code>number</code>               | Index in the sequence.                                           |
+| base          | <code>number</code>               | An integer, preferably prime number.                             |
+| [permutation] | <code>Array.&lt;number&gt;</code> | A permutation of the digits [0, base - 1] applied to each digit. |
+
+<a name="module_halton.createPermutations"></a>
+
+### halton.createPermutations([bases], [random]) ⇒ <code>Array.&lt;Array.&lt;number&gt;&gt;</code>
+
+Create a random digit permutation for each base, to scramble the Halton
+sequence.
+
+**Kind**: static method of [<code>halton</code>](#module_halton)
+
+| Param    | Type                              | Default                  | Description                                           |
+| -------- | --------------------------------- | ------------------------ | ----------------------------------------------------- |
+| [bases]  | <code>Array.&lt;number&gt;</code> | <code>[2, 3]</code>      | The bases to create a permutation for.                |
+| [random] | <code>function</code>             | <code>Math.random</code> | A random number generator returning values in [0, 1). |
+
+<a name="module_halton.createFaurePermutations"></a>
+
+### halton.createFaurePermutations([bases]) ⇒ <code>Array.&lt;Array.&lt;number&gt;&gt;</code>
+
+Create a deterministic Faure digit permutation for each base, to scramble the
+Halton sequence.
+
+**Kind**: static method of [<code>halton</code>](#module_halton)
+**See**: Faure, "Good permutations for extreme discrepancy", Journal of Number Theory, 1992.
+
+| Param   | Type                              | Default             | Description                            |
+| ------- | --------------------------------- | ------------------- | -------------------------------------- |
+| [bases] | <code>Array.&lt;number&gt;</code> | <code>[2, 3]</code> | The bases to create a permutation for. |
 
 <a name="module_halton.default"></a>
 
-### halton.default(count, [bases]) ⇒ <code>Array.&lt;Array.&lt;number&gt;&gt;</code>
+### halton.default(count, [bases], [permutations]) ⇒ <code>Array.&lt;Array.&lt;number&gt;&gt;</code>
 
-Generate n points of the Halton sequence in n-dimensions.
-The "bases" parameter defines how many dimensions.
+Generate n points of the Halton sequence in n-dimensions. The "bases"
+parameter defines how many dimensions. Pass "permutations" to scramble the
+sequence and break the regular patterns of higher bases.
 
 **Kind**: static method of [<code>halton</code>](#module_halton)
 
-| Param   | Type                              | Default             | Description                                                                          |
-| ------- | --------------------------------- | ------------------- | ------------------------------------------------------------------------------------ |
-| count   | <code>number</code>               |                     | Number of points in the sequence to generate.                                        |
-| [bases] | <code>Array.&lt;number&gt;</code> | <code>[2, 3]</code> | The bases for the Van der Corput operation. Best results with small coprime numbers. |
+| Param          | Type                                            | Default             | Description                                                                          |
+| -------------- | ----------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------ |
+| count          | <code>number</code>                             |                     | Number of points in the sequence to generate.                                        |
+| [bases]        | <code>Array.&lt;number&gt;</code>               | <code>[2, 3]</code> | The bases for the Van der Corput operation. Best results with small coprime numbers. |
+| [permutations] | <code>Array.&lt;Array.&lt;number&gt;&gt;</code> |                     | A digit permutation per base. See createPermutations and createFaurePermutations.    |
 
 <!-- api-end -->
 
