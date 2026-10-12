@@ -5,6 +5,8 @@
     "es-module-shims/debug": "./es-module-shims/debug.js",
     "es-module-shims/wasm": "./es-module-shims/wasm.js",
     "es-module-shims/typescript-transform": "./es-module-shims/typescript-transform.js",
-    "hammersley": "./hammersley.js"
+    "hammersley": "./hammersley.js",
+    "pex-random": "./pex-random.js",
+    "halton": "../index.js"
   }
 }
