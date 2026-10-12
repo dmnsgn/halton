@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Generate n points of the Halton sequence in n-dimensions.",
   "keywords": [
-    "halton",
+    "hammersley",
     "point-set",
     "low-discrepancy",
     "quasirandom",
@@ -35,8 +35,11 @@
       "default": "./index.js"
     }
   },
-  "main": "index.js",
-  "types": "types/index.d.ts",
+  "main": "./index.js",
+  "types": "./types/index.d.ts",
+  "scripts": {
+    "test": "node --test"
+  },
   "dependencies": {
     "hammersley": "^2.0.0"
   },
@@ -45,9 +48,9 @@
     "es-module-shims": "^2.8.4",
     "pex-random": "^2.1.2"
   },
+  "packageManager": "npm@11.3.0",
   "engines": {
-    "node": ">=22.0.0",
-    "npm": ">=10.5.1",
-    "snowdev": ">=2.3.x"
+    "node": ">=24.0.0",
+    "snowdev": ">=3.0.0-alpha.3"
   }
 }

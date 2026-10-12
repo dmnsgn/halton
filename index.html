@@ -7,9 +7,9 @@
     <title>halton by Damien Seguin (https://github.com/dmnsgn)</title>
     <style>
       :root {
-        --color-dark: #404040;
+       --color-dark: #222222;
         --color-light: #f2f2f2;
-        --color-accent: #fd5e62;
+        --color-accent: #95171d;
         --result-size: 192px;
       }
 
@@ -45,8 +45,9 @@
     <script src="web_modules/import-map.json" type="importmap-shim"></script>
 
     <script type="module-shim">
-      import halton from "./index.js";
+      import halton, { createPermutations } from "./index.js";
       import hammersley from "hammersley";
+      import random from "pex-random";
 
       import canvasContext from "canvas-context";
 
@@ -56,6 +57,9 @@
       const halfSize = size / 2;
 
       const pointsCount = 256;
+
+      // Seeded for reproducible permutations across reloads.
+      const prng = random.create(1);
 
       const drawPoints = (title, points, newRow) => {
         const { context, canvas } = canvasContext("2d", {
@@ -102,8 +106,7 @@
         return containerElement;
       };
 
-      let baseX;
-      [
+      const basesList = [
         [2, 3],
         [2, 5],
         [2, 7],
@@ -123,16 +126,35 @@
         [7, 11],
         [7, 13],
         [7, 15],
-      ].forEach((bases) => {
-        const title = `halton [${bases[0]}, ${bases[1]}]`;
+      ];
+
+      const isIdentity = (permutation) =>
+        permutation.every((digit, index) => digit === index);
+
+      const drawHalton = (name, bases, permutations, newRow) => {
+        const title = `${name} [${bases[0]}, ${bases[1]}]`;
 
         console.time(title);
-        const points = halton(pointsCount, bases);
+        const points = halton(pointsCount, bases, permutations);
         console.timeEnd(title);
 
-        drawPoints(title, points, baseX !== bases[0]);
+        drawPoints(title, points, newRow);
+      };
 
-        [baseX] = bases;
+      basesList.forEach((bases, i) => {
+        drawHalton(
+          "halton",
+          bases,
+          undefined,
+          bases[0] !== basesList[i - 1]?.[0],
+        );
+
+        const permutations = createPermutations(bases, () => prng.float());
+
+        // Identity permutations leave the sequence unchanged.
+        if (!permutations.every(isIdentity)) {
+          drawHalton("scrambled", bases, permutations);
+        }
       });
 
       console.time("hammersley");

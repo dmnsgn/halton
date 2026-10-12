@@ -16,7 +16,7 @@ Generate n points of the Halton sequence in n-dimensions.
 [![coinbase](https://img.shields.io/badge/donate-coinbase-informational?logo=coinbase)](https://commerce.coinbase.com/checkout/56cbdf28-e323-48d8-9c98-7019e72c97f3)
 [![twitter](https://img.shields.io/twitter/follow/dmnsgn?style=social)](https://twitter.com/dmnsgn)
 
-![](https://raw.githubusercontent.com/dmnsgn/halton/main/screenshot.png)
+[![halton screenshot](https://raw.githubusercontent.com/dmnsgn/halton/main/screenshot.png)](https://dmnsgn.github.io/halton/)
 
 ## Installation
 
@@ -35,6 +35,15 @@ const points = halton(pointsCount);
 // 1: [0.5, 0.3333333333333333]
 // 2: [0.25, 0.6666666666666666]
 // 3: [0.75, 0.1111111111111111]
+```
+
+Scramble the sequence with a digit permutation per base to break the regular patterns of higher bases:
+
+```js
+import halton, { createPermutations } from "halton";
+
+const bases = [11, 13];
+const points = halton(pointsCount, bases, createPermutations(bases));
 ```
 
 ## API
